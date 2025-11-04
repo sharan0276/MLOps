@@ -2,7 +2,7 @@ name: Docker Build and Test
 
 on:
   push:
-    branches: [ featurea, main ]
+    branches: [featurea, main ]
     paths:
       - 'Labs/Github_Labs/Lab5/**'
   workflow_dispatch:
