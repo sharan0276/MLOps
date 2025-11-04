@@ -4,7 +4,8 @@ on:
   push:
     branches: [ featurea, main ]
     paths:
-      - 'Labs/Github_Labs/Lab5/**' 
+      - 'Labs/Github_Labs/Lab5/**'
+  workflow_dispatch:
 
 jobs:
   test:
