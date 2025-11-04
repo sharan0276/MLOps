@@ -22,26 +22,39 @@ The workflow involves the following steps:
 2. Activate the environment and install the required packages using `pip install -r requirements.txt`.
 3. Implementing comprehensive logging for experiment tracking and monitoring.
 
-### Project structure
+## New in Lab5
 
+This lab extends the FastAPI implementation with:
+- **Docker containerization** for consistent deployment
+- **CI/CD pipeline** using GitHub Actions for automated testing
+- **Feature branch workflow** for safe development practices
+- 
+
+### Project structure
 ```
-mlops_labs
-└── Logging_Labs
-    ├── assets/
-    |__ logs/
-        |--api.log       # API request/response logs
-        |--training.log  # Model Training Logs
-    ├── fastapi_lab1_env/
-    ├── model/
-    │   └── iris_model.pkl
-    ├── src/
-    │   ├── __init__.py
-    │   ├── data.py
-    │   ├── main.py
-    │   ├── predict.py
-    │   └── train.py
-    ├── README.md
-    └── requirements.txt
+Labs/Github_Labs/Lab5/
+├── .github/
+│   └── workflows/
+│       └── lab5-docker-test.yml    # CI/CD pipeline configuration
+├── assets/
+│   ├── api_documentation.png
+│   ├── api_response.png
+│   └── docs.png
+├── logs/
+│   ├── api.log                     # API request/response logs
+│   └── training.log                # Model Training Logs
+├── model/
+│   ├── penguin_artifact.joblib     # Label encoder classes
+│   └── penguin_model.pkl           # Trained model
+├── src/
+│   ├── __init__.py
+│   ├── data.py                     # Data loading and preprocessing
+│   ├── main.py                     # FastAPI application
+│   ├── predict.py                  # Prediction logic
+│   └── train.py                    # Model training pipeline
+├── Dockerfile                       # Docker container definition
+├── README.md                        # This file
+└── requirements.txt                 # Python dependencies
 ```
 
 Note:
@@ -52,7 +65,61 @@ Note:
   os.makedirs('logs', exist_ok=True)
 ```
 
-## Running the Lab
+## Docker Setup
+
+### Prerequisites
+- Docker installed on your machine ([Install Docker](https://docs.docker.com/get-docker/))
+- Git for version control
+
+### Quick Start with Docker
+
+1. **Build the Docker image:**
+```bash
+   docker build -t penguin-api .
+```
+
+2. **Run the container:**
+```bash
+   docker run -p 8000:8000 penguin-api
+```
+
+3. **Access the API:**
+   - Health check: http://localhost:8000/
+   - API docs: http://localhost:8000/docs
+
+The container automatically trains the model and starts the API server!
+
+### Docker Commands Reference
+```bash
+# Build image
+docker build -t penguin-api .
+
+# Run container (foreground)
+docker run -p 8000:8000 penguin-api
+
+# Run container (background/detached)
+docker run -d -p 8000:8000 --name penguin-container penguin-api
+
+# View container logs
+docker logs penguin-container
+
+# Follow logs in real-time
+docker logs -f penguin-container
+
+# Stop container
+docker stop penguin-container
+
+# Remove container
+docker rm penguin-container
+
+# List running containers
+docker ps
+
+# List all containers
+docker ps -a
+```
+
+## Running the Lab - Without Docker 
 
 1. First step is to train a Decision Tree Classifier(Although you have **`model/iris_model.pkl`** when you cloned from the repo, let's create a new model). To do this, move into **src/** folder with
     ```bash
@@ -270,5 +337,141 @@ FastAPI will catch this exception and return a response with a 404 status code a
     "detail": "Item with ID 1 not found"
 }
 ```
+
+## Docker Setup
+
+### Prerequisites
+- Docker installed on your machine ([Install Docker](https://docs.docker.com/get-docker/))
+- Git for version control
+
+### Quick Start with Docker
+
+1. **Build the Docker image:**
+```bash
+   docker build -t penguin-api .
+```
+
+2. **Run the container:**
+```bash
+   docker run -p 8000:8000 penguin-api
+```
+
+3. **Access the API:**
+   - Health check: http://localhost:8000/
+   - API docs: http://localhost:8000/docs
+
+The container automatically trains the model and starts the API server!
+
+
+## CI/CD Pipeline
+
+This project includes automated testing via GitHub Actions.
+
+### What is CI/CD?
+
+**CI (Continuous Integration):** Automatically tests your code every time you push changes to ensure nothing breaks.
+
+**What happens when you push to `featurea` branch:**
+1. GitHub Actions triggers automatically
+2. Builds Docker image
+3. Starts container
+4. Tests health endpoint (`/`)
+5. Tests prediction endpoint (`/predict`)
+6. Reports success or failure
+
+### Viewing Test Results
+
+1. Go to your repository on GitHub
+2. Click the **Actions** tab
+3. Select the latest workflow run
+4. View detailed logs for each step
+
+### Workflow Configuration
+
+The CI/CD pipeline is defined in `.github/workflows/lab5-docker-test.yml`
+
+**Triggers:**
+- Pushes to `featurea` branch
+- Only when files in `Labs/Github_Labs/Lab5/` change
+
+**Benefits:**
+- Catches bugs before merging to main
+- Ensures code works in clean environment
+- Automated testing saves time
+- Protects production code quality
+
+### Feature Branch Workflow
+```bash
+# 1. Create feature branch
+git checkout -b featurea
+
+# 2. Make changes and commit
+git add .
+git commit -m "Add new feature"
+
+# 3. Push to trigger automated tests
+git push origin featurea
+
+# 4. Check GitHub Actions for test results
+
+# 5. Merge to main after tests pass
+git checkout main
+git merge featurea
+git push origin main
+```
+## Troubleshooting
+
+### Docker Issues
+
+**Problem:** `Cannot find Dockerfile`
+```bash
+# Solution: Ensure Dockerfile is in the Lab5 root directory
+ls Dockerfile  # Should show the file
+```
+
+**Problem:** `Port 8000 already in use`
+```bash
+# Solution: Stop the process using port 8000
+lsof -i :8000          # Find the process
+kill -9           # Kill it
+# OR use a different port
+docker run -p 8001:8000 penguin-api
+```
+
+**Problem:** Container exits immediately
+```bash
+# Solution: Check container logs for errors
+docker logs penguin-container
+```
+
+### GitHub Actions Issues
+
+**Problem:** Workflow not triggering
+- Ensure workflow file is in `.github/workflows/` at repository root
+- Check that you're pushing to `featurea` branch
+- Verify changes are in `Labs/Github_Labs/Lab5/` folder
+
+**Problem:** Tests failing
+- Check the Actions tab for detailed error logs
+- Common issues:
+  - Dockerfile not found → Verify file location
+  - Tests timeout → Increase sleep time in workflow
+  - Module import errors → Check requirements.txt
+
+### API Issues
+
+**Problem:** `Module not found` errors
+```bash
+# Solution: Reinstall dependencies
+pip install -r requirements.txt
+```
+
+**Problem:** Model file not found
+```bash
+# Solution: Train the model first
+cd src
+python train.py
+```
+
 - For more information on how to handle errors in FASTAPI refer to this [documentation](https://fastapi.tiangolo.com/tutorial/handling-errors/).
 
