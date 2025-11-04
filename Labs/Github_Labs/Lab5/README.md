@@ -26,16 +26,15 @@ The workflow involves the following steps:
 
 This lab extends the FastAPI implementation with:
 - **Docker containerization** for consistent deployment
-- **CI/CD pipeline** using GitHub Actions for automated testing
+- **CI/CD pipeline** using GitHub Actions (Docker Build and Test) for automated testing
 - **Feature branch workflow** for safe development practices
-- 
 
 ### Project structure
 ```
 Labs/Github_Labs/Lab5/
 ├── .github/
 │   └── workflows/
-│       └── lab5-docker-test.yml    # CI/CD pipeline configuration
+│       └── test_new_push.yml    # CI/CD pipeline configuration
 ├── assets/
 │   ├── api_documentation.png
 │   ├── api_response.png
