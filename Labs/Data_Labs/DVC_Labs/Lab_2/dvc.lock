@@ -1,0 +1,35 @@
+schema: '2.0'
+stages:
+  prepare:
+    cmd: python src/prepare.py
+    deps:
+    - path: data/penguins_raw.csv
+      hash: md5
+      md5: 15d47d23d10f2f2f842439a2abdb771d
+      size: 15010
+    - path: src/prepare.py
+      hash: md5
+      md5: 2a7fb7416f3582fd32cc14698c259466
+      size: 872
+    outs:
+    - path: data/penguins_clean.csv
+      hash: md5
+      md5: 5658e13fdb5b9572e29900e2337f9993
+      size: 14616
+  train:
+    cmd: python src/train.py
+    deps:
+    - path: data/penguins_clean.csv
+      hash: md5
+      md5: 5658e13fdb5b9572e29900e2337f9993
+      size: 14616
+    - path: src/train.py
+      hash: md5
+      md5: 7ebd61252a9533574482b3c77607460a
+      size: 3188
+      isexec: true
+    outs:
+    - path: model/penguin_model.pkl
+      hash: md5
+      md5: 42e25e2e1408d9b4568ad84c80367274
+      size: 146625
