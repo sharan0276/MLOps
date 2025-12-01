@@ -6,3 +6,10 @@ stages:
     - src/prepare.py
     outs:
     - data/penguins_clean.csv
+  train:
+    cmd: python src/train.py
+    deps:
+    - data/penguins_clean.csv
+    - src/train.py
+    outs:
+    - model/penguin_model.pkl

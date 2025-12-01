@@ -5,17 +5,18 @@
 
 ---
 
-# Penguin Classifier with FastAPI and MLflow
+# Penguin Classifier with FastAPI, MLflow, and DVC
 
-This project demonstrates how to build, train, and deploy a machine learning model using FastAPI and track all training and inference activity with MLflow. The machine learning model predicts the species of a penguin based on bill length, bill depth, flipper length, and body mass.
+End-to-End MLOps Workflow: Data → Training → Model Versioning → API Inference Logging
 
-The lab consists of four major components:
-1. Data loading and preprocessing
-2. Model training and artifact generation
-3. FastAPI prediction service
-4. MLflow experiment tracking across training and inference
+This project demonstrates a complete MLOps workflow using:
+    1. DVC for dataset and model versioning
+    2. MLflow for experiment, training, and inference tracking
+    3. FastAPI for serving real-time predictions
+    4. Scikit-learn for model training
 
-Screenshot placeholders are included so that MLflow UI outputs can be added to the document.
+The model predicts penguin species (Adelie, Gentoo, Chinstrap) using bill length, bill depth, flipper length, and body mass.
+
 
 ---------------------------------------------------------------------
 
@@ -30,33 +31,63 @@ Screenshot placeholders are included so that MLflow UI outputs can be added to t
         |--data.py Data loading and splitting
         |--mlflow_config.py MLflow configuration (New Addition from previous log lab submission)
     |-- model/ Model and artifacts
+    |-- data/
+    |   |-- penguins_raw.csv          # DVC-tracked raw dataset
+    |   |-- penguins_clean.csv        # DVC-generated clean dataset
     |--logs/ Log files
     |--mlruns/ MLflow tracking storage
+    |-- dvc.yaml
+    |-- dvc.lock
+    |-- README.md
 
 
 ---------------------------------------------------------------------
 
 ## Part 1: Loading and Preparing the Data
 
-The dataset used is the Palmer Penguins dataset provided through the seaborn library.  
-The data.py file loads the dataset, selects numeric features, removes missing values, and splits the dataset into training and testing sets.
+The dataset used is the Palmer Penguins dataset provided through the seaborn library.
+The preprocessing steps:
+1. Load dataset
+2. Keep numeric features
+3. Normalize column names
+4. Convert species labels to lowercase
+5. Drop missing values
+6. Save cleaned dataset as data/penguins_clean.csv
+
+DVC tracks this stage:
+
+dvc stage add -n prepare \
+    -d src/prepare.py \
+    -d data/penguins_raw.csv \
+    -o data/penguins_clean.csv \
+    python src/prepare.py
+
 
 ---------------------------------------------------------------------
 
-## Part 2: Training the Model with MLflow Tracking
+## Part 2: Model Training with MLflow (DVC Stage: Train)
 
 The train.py script performs the following actions:
 
-1. Loads and preprocesses the dataset  
-2. Encodes the target labels  
-3. Trains a RandomForestClassifier  
-4. Saves the trained model to the model folder  
-5. Saves a label artifact containing the class names  
-6. Logs all training parameters, dataset sizes, model type, and artifacts to MLflow  
-7. Logs the trained model as an MLflow model  
+1. Load cleaned data
+2. Encode labels using LabelEncoder
+3. Train a RandomForestClassifier
+4. Save model to model/penguin_model.pkl
+5. Save class name artifact to model/penguin_artifact.joblib
+6. Log training parameters to MLflow
+7. Log the trained model to MLflow
 
-MLflow Run Screenshot Placeholder:  
-Insert MLflow Training Run Screenshot Here.
+DVC training stage:
+
+dvc stage add -n train \
+    -d src/train.py \
+    -d data/penguins_clean.csv \
+    -o model/penguin_model.pkl \
+    python src/train.py
+
+To run the full DVC pipline, run : dvc repro
+
+![DVC Training Screenshot](assets/dvc_logs.png)
 
 ---------------------------------------------------------------------
 
@@ -99,8 +130,8 @@ Insert MLflow API Request Screenshot Here.
 
 Step 1: Navigate to your project folder  
 Step 2: Install dependencies  " pip install fastapi uvicorn scikit-learn seaborn mlflow joblib numpy"
-Step 3: Train the model 
-Step 4: Start the FastAPI server
+Step 3 : Reproduce the full DVC pipeline (Prepare + Train) using dvc repro
+Step 4: Start the FastAPI server from Lab_2, uvicorn src.main:app --reload
 Step 5: Test the API using the built-in Swagger UI : Open in your browser:  http://127.0.0.1:8000/docs
 Step 6: Start MLflow UI (run in a new terminal window)  : navigate to code folder :  execute mlflow ui --backend-store-uri ../mlruns
         Open MLflow dashboard:  http://127.0.0.1:5000
@@ -128,5 +159,6 @@ This lab demonstrates:
 3. How to integrate MLflow for experiment tracking  
 4. How to track training, inference, and live API usage  
 5. How to view experiment data using the MLflow UI  
+6. How to control data versions and reproduce them with projects
 
 This provides a complete end-to-end workflow for machine learning operations, from data loading to production-like logging of inference events.

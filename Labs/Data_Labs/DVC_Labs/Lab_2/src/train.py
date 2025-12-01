@@ -13,7 +13,7 @@ logging.basicConfig(
     level = logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     handlers=[
-        logging.FileHandler('../logs/training.log'),
+        logging.FileHandler('logs/training.log'),
         logging.StreamHandler()
     ]
 )
@@ -37,8 +37,9 @@ def fit_model(X_train, y_train):
         logger.info("Model training completed succesfully!")
         logger.info("Saving model to 'model/penguin_model.pkl'")
 
-        joblib.dump(rf_classifier, "../model/penguin_model.pkl")
+        joblib.dump(rf_classifier, "model/penguin_model.pkl")
         logger.info("Saved Model Successfully")
+        return rf_classifier
 
     except Exception as e:
         logger.error(f"Error during model training: {str(e)}")
@@ -84,8 +85,8 @@ if __name__ == "__main__":
 
             # Save artifact containing class names
             artifact = {"classes": list(le.classes_)}
-            joblib.dump(artifact, "../model/penguin_artifact.joblib")
-            mlflow.log_artifact("../model/penguin_artifact.joblib")
+            joblib.dump(artifact, "model/penguin_artifact.joblib")
+            mlflow.log_artifact("model/penguin_artifact.joblib")
 
 
             #fit_model(X_train, y_train)
@@ -94,7 +95,7 @@ if __name__ == "__main__":
             artifact = {
                 "classes": list(le.classes_)
             }
-            joblib.dump(artifact, "../model/penguin_artifact.joblib")
+            joblib.dump(artifact, "model/penguin_artifact.joblib")
             logger.info('Artifact saved successfully!')
 
             logger.info("Training Pipeline Completed Successfully!")

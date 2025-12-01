@@ -1,19 +1,19 @@
 from fastapi import FastAPI, status, HTTPException, Request
 from pydantic import BaseModel
-from predict import predict_data
+from src.predict import predict_data
 import numpy as np
 import logging
 import joblib
 import time
 import mlflow
-from mlflow_config import init_mlflow
+from src.mlflow_config import init_mlflow
 
 # Configure logging
 logging.basicConfig(
     level = logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     handlers = [
-        logging.FileHandler('../logs/api.log'), # log to file api.log
+        logging.FileHandler('logs/api.log'), # log to file api.log
         logging.StreamHandler()  # Log to Console
     ]
 )
@@ -84,7 +84,7 @@ async def predict_penguin(penguin_features: PenguinData):
             mlflow.log_param("flipper_length", penguin_features.flipper_length)
             mlflow.log_param("body_mass", penguin_features.body_mass)
 
-            art = joblib.load("../model/penguin_artifact.joblib")
+            art = joblib.load("model/penguin_artifact.joblib")
             classes = art["classes"]
 
             features = [[penguin_features.bill_length, penguin_features.bill_depth,

@@ -2,6 +2,7 @@ import numpy as np
 import seaborn as sns
 from sklearn.model_selection import train_test_split
 import logging
+import pandas as pd
 
 logger = logging.getLogger(__name__)
 
@@ -13,16 +14,19 @@ def save_raw_data(path="data/penguins_raw.csv"):
     df.to_csv(path, index=False)
     logger.info(f"Saved raw penguin dataset to {path}")
 
-def load_data():
+def load_data(path="data/penguins_clean.csv"):
     """
-    Load the Penguins dataset and return the features and target values.
+    Load the Penguins dataset through DVC and return the features and target values.
+    Args :
+        path : The path to cleaned data
     Returns:
         X (numpy.ndarray): The features of the Penguin dataset.
         y (numpy.ndarray): The target values of the Penguin dataset.
     """
     try:
         logger.info("Loading penguin dataset...")
-        df = sns.load_dataset("penguins")
+        df = pd.read_csv(path)
+
         features = ["bill_length_mm", "bill_depth_mm", "flipper_length_mm", "body_mass_g"]
         df = df[features + ["species"]].dropna()
 
@@ -34,6 +38,7 @@ def load_data():
 
         logger.info(f"Data Shape - X: {X.shape}, y : {y.shape}")
         return X, y
+
     except Exception as e:
         logger.error(f"Error with loading data : {str(e)}")
         raise

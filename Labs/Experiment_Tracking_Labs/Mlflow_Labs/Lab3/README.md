@@ -55,8 +55,8 @@ The train.py script performs the following actions:
 6. Logs all training parameters, dataset sizes, model type, and artifacts to MLflow  
 7. Logs the trained model as an MLflow model  
 
-MLflow Run Screenshot Placeholder:  
-Insert MLflow Training Run Screenshot Here.
+MLflow Run Screenshot:  
+![MLFlow Training Screenshot](assets/MLflow-training_experiment.png)
 
 ---------------------------------------------------------------------
 
@@ -71,8 +71,9 @@ The predict.py script:
 
 This nested logging allows inference logs to be visually grouped under parent API calls during FastAPI execution.
 
-MLflow Inference Run Screenshot Placeholder:  
-Insert MLflow Inference Run Screenshot Here.
+MLflow Inference Run Screenshot :  
+![MLFlow API_Request Screenshot](assets/MLflow-api_request_experiment.png)
+
 
 ---------------------------------------------------------------------
 
@@ -91,7 +92,7 @@ When a POST request is sent to /predict:
 This provides full observability for every prediction request made to the API.
 
 MLflow API Request Run Screenshot Placeholder:  
-Insert MLflow API Request Screenshot Here.
+![MLFlow Prediction_Screenshot](assets/MLflow-prediction.png)
 
 ---------------------------------------------------------------------
 

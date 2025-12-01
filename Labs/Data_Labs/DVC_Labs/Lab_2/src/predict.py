@@ -1,7 +1,7 @@
 import joblib
 import logging
 import mlflow
-from mlflow_config import init_mlflow
+from src.mlflow_config import init_mlflow
 
 logger = logging.getLogger(__name__)
 
@@ -25,13 +25,13 @@ def predict_data(X):
             mlflow.log_param("input_shape", X.shape)
 
             logger.debug(f"Loading model for prediction.....")
-            model = joblib.load("../model/penguin_model.pkl")
+            model = joblib.load("model/penguin_model.pkl")
             logger.debug(f"Input Shape : {X.shape}")
             y_pred = model.predict(X)
 
             # Log output
             mlflow.log_metric("num_predictions", len(y_pred))
-            logger.debug(f"prediction resut : {y_pred}")
+            logger.debug(f"prediction result : {y_pred}")
             return y_pred
 
     except Exception as e:
